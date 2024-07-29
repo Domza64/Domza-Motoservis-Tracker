@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 export interface ServiceItem {
   title: string;
+  // Replace lastService with array of numbers where obviously last number will be last service
   lastService: number;
   lastServiceDate: Date;
   serviceInterval: number;
