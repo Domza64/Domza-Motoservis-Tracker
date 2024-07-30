@@ -7,7 +7,13 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        motoservis_red: "#ff5c5c",
+        motoservis_red_dark: "#e65151 ",
+        motoservis_yellow: "#ffd470",
+      },
+    },
   },
   plugins: [],
 };
