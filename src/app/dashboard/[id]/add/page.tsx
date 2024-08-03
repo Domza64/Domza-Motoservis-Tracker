@@ -2,26 +2,28 @@
 
 import { addServiceItem } from "@/app/Actions";
 import SubmitButton from "@/component/SubmitButton";
-import { redirect } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { useEffect } from "react";
 import { useFormState } from "react-dom";
 
 export default function AddServiceItemForm() {
   const [state, formAction] = useFormState(addServiceItem, undefined);
+  const { id } = useParams();
 
   useEffect(() => {
     if (state?.success) {
-      redirect("/dashboard");
+      redirect(`/dashboard/${id}`);
     }
   }, [state]);
 
   return (
-    <main className="flex flex-col items-center mt-12">
-      <h1 className="text-xl font-bold mb-4">Add new Service Item to track</h1>
+    <div className="flex flex-col items-center mt-12">
+      <h3 className="text-xl font-bold mb-4">Add new Service Item to track</h3>
       <form
         action={formAction}
         className="flex gap-1 flex-col bg-slate-200 shadow-md max-w-lg p-4 rounded"
       >
+        <input type="hidden" name="id" value={id} />
         <div>
           <span>*</span>
           <input
@@ -91,6 +93,6 @@ export default function AddServiceItemForm() {
         </div>
         <SubmitButton />
       </form>
-    </main>
+    </div>
   );
 }

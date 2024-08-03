@@ -18,7 +18,7 @@ export default async function Home() {
               <span className="text-motoservis_red underline">again</span>!
             </h1>
             <h2 className="mt-6 text-xl font-semibold">
-              Get reminded when to:
+              Track your services and get reminded when to:
             </h2>
             <ul className="ml-6 flex flex-col list-disc">
               <li>Change oil</li>

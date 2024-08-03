@@ -1,13 +1,16 @@
-import { ServiceItem } from "@/model/UserModel";
 import { deleteServiceItem } from "@/app/Actions";
+import { ServiceItem } from "@/model/MotorcycleModel";
+import DeleteButton from "./DeleteButton";
 
 interface Props {
   serviceItem: ServiceItem;
+  motorcycleId: string;
   currentMotorcycleMilage: number;
 }
 
 export default function ServiceItemCard({
   serviceItem,
+  motorcycleId,
   currentMotorcycleMilage,
 }: Props) {
   // @ts-ignore
@@ -38,6 +41,7 @@ export default function ServiceItemCard({
       {/* TODO - Add are you sure prompt */}
       <form action={deleteServiceItem}>
         <input type="hidden" name="id" value={id} />
+        <input type="hidden" name="motorcycleId" value={motorcycleId} />
         {/*<DeleteButton />*/}
         <button type="submit">Delete</button>
       </form>

@@ -5,7 +5,7 @@ export default function DeleteButton() {
 
   return (
     <button
-      className="rounded bg-slate-600 py-1 px-2 text-white font-bold"
+      className="bg-red-400 text-white rounded py-1 px-3 font-bold hover:bg-red-500 disabled:bg-blue-500"
       type="submit"
       disabled={pending}
     >

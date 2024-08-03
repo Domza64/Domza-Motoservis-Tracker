@@ -1,37 +1,9 @@
 import mongoose from "mongoose";
 
-export interface ServiceItem {
-  title: string;
-  // Replace lastService with array of numbers where obviously last number will be last service
-  lastService: number;
-  lastServiceDate: Date;
-  serviceInterval: number;
-}
-
 export interface IUserModel extends mongoose.Document {
   email: string;
-  serviceItem: ServiceItem[];
-  currentMilage: number;
+  bikes: Record<string, string>;
 }
-
-const ServiceItemSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: [true, "Please provide a title."],
-  },
-  lastService: {
-    type: Number,
-    required: true,
-  },
-  lastServiceDate: {
-    type: Date,
-    required: true,
-  },
-  serviceInterval: {
-    type: Number,
-    required: true,
-  },
-});
 
 const UserModelSchema = new mongoose.Schema<IUserModel>({
   email: {
@@ -41,14 +13,11 @@ const UserModelSchema = new mongoose.Schema<IUserModel>({
     unique: true,
     indexedDB: true,
   },
-  serviceItem: {
-    type: [ServiceItemSchema],
-    required: [true, "Please provide a title."],
-  },
-  currentMilage: {
-    type: Number,
+  bikes: {
+    type: Map,
+    of: String,
     required: true,
-    maxlength: [60, "Cannot be more than 60 characters"],
+    default: {},
   },
 });
 
