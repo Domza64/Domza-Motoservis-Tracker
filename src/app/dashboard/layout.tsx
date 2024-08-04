@@ -24,7 +24,7 @@ export default async function DashboardLayout({
 
   return (
     <main className="flex items-center flex-col">
-      <section className="w-full max-w-5xl">
+      <section className="w-full max-w-5xl py-32">
         <h1 className="text-3xl font-semibold">
           Welcome {session?.user.name}!
         </h1>

@@ -21,7 +21,7 @@ export default function ServiceItemCard({
   //const serviceIntervalDate = serviceItem.serviceIntervalDate;
 
   return (
-    <div className="rounded bg-sky-100 p-4 shadow-md">
+    <div className="rounded bg-white p-4 shadow-md w-full">
       <p className="font-bold">{serviceItem.title}</p>
       {serviceInterval && <p>Should service every: {serviceInterval} km</p>}
       {/*serviceIntervalDate && (

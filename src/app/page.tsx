@@ -5,7 +5,7 @@ export default async function Home() {
   return (
     <main className="flex flex-col items-center bg-gradient-to-tl from-slate-900 to-black text-white min-h-screen">
       <section className="mt-32 w-full flex flex-col items-center">
-        <div className="flex w-full gap-48 justify-between max-w-6xl ">
+        <div className="flex flex-col lg:flex-row w-full gap-48 justify-between max-w-6xl p-4">
           <Image
             src={"/motoservis.svg"}
             alt={"Logo"}

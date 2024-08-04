@@ -14,7 +14,7 @@ export default function AddServiceItemForm() {
     if (state?.success) {
       redirect(`/dashboard/${id}`);
     }
-  }, [state]);
+  }, [state, id]);
 
   return (
     <div className="flex flex-col items-center mt-12">

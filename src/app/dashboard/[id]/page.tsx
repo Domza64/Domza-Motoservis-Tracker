@@ -17,34 +17,36 @@ export default async function Page({ params }: { params: { id: string } }) {
   const motorcycle: IMotorcycleModel = await getData(id);
 
   return (
-    <section className="w-full max-w-5xl flex flex-col items-start mt-24">
-      {motorcycle ? (
-        <>
-          <h3 className="text-3xl font-semibold">
-            {motorcycle?.motorcycleName}
-          </h3>
-          <div className="flex items-center gap-2">
-            <MilageDisplay initialMilage={motorcycle.currentMilage} />
-          </div>
-          <h2 className="text-2xl">Service Items:</h2>
-          <div className="flex flex-col gap-2">
-            {motorcycle.serviceItem.map((serviceItem: ServiceItem) => (
-              <ServiceItemCard
-                key={serviceItem.title}
-                serviceItem={serviceItem}
-                motorcycleId={motorcycle.id}
-                currentMotorcycleMilage={motorcycle.currentMilage}
-              />
-            ))}
-          </div>
-          <Link href={`${id}/add`} className="underline">
-            Add new item
-          </Link>
-          <DeleteMotorcycleButton id={id} />
-        </>
-      ) : (
-        <p>Not found :(</p>
-      )}
+    <section className="w-full bg-slate-200 flex justify-center py-16">
+      <div className="w-full max-w-5xl flex flex-col items-start">
+        {motorcycle ? (
+          <>
+            <h3 className="text-3xl font-semibold">
+              {motorcycle?.motorcycleName}
+            </h3>
+            <div className="flex items-center gap-2">
+              <MilageDisplay initialMilage={motorcycle.currentMilage} />
+            </div>
+            <h4 className="text-2xl mt-8">Service Items:</h4>
+            <div className="flex flex-col gap-4 my-4 w-full">
+              {motorcycle.serviceItem.map((serviceItem: ServiceItem) => (
+                <ServiceItemCard
+                  key={serviceItem.title}
+                  serviceItem={serviceItem}
+                  motorcycleId={motorcycle.id}
+                  currentMotorcycleMilage={motorcycle.currentMilage}
+                />
+              ))}
+            </div>
+            <Link href={`${id}/add`} className="underline">
+              Add new item
+            </Link>
+            <DeleteMotorcycleButton id={id} />
+          </>
+        ) : (
+          <p>Not found :(</p>
+        )}
+      </div>
     </section>
   );
 }
