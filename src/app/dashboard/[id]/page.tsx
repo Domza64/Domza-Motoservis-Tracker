@@ -1,6 +1,4 @@
-import { deleteMotorcycle } from "@/app/Actions";
 import { auth } from "@/auth";
-import DeleteButton from "@/component/DeleteButton";
 import DeleteMotorcycleButton from "@/component/DeleteMotorcycleButton";
 import MilageDisplay from "@/component/MilageDisplay";
 import ServiceItemCard from "@/component/ServiceItemCard";
@@ -11,43 +9,47 @@ import MotorcycleModel, {
 } from "@/model/MotorcycleModel";
 import UserModel from "@/model/UserModel";
 import Link from "next/link";
+import MotorMenu from "@/component/MotorMenu";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
   const motorcycle: IMotorcycleModel = await getData(id);
 
+  if (!motorcycle) {
+    throw new Error(`Motorcycle: ${id} was not found`);
+  }
+
   return (
-    <section className="w-full bg-slate-200 flex justify-center py-16">
-      <div className="w-full max-w-5xl flex flex-col items-start">
-        {motorcycle ? (
-          <>
-            <h3 className="text-3xl font-semibold">
-              {motorcycle?.motorcycleName}
-            </h3>
-            <div className="flex items-center gap-2">
-              <MilageDisplay initialMilage={motorcycle.currentMilage} />
-            </div>
-            <h4 className="text-2xl mt-8">Service Items:</h4>
-            <div className="flex flex-col gap-4 my-4 w-full">
-              {motorcycle.serviceItem.map((serviceItem: ServiceItem) => (
-                <ServiceItemCard
-                  key={serviceItem.title}
-                  serviceItem={serviceItem}
-                  motorcycleId={motorcycle.id}
-                  currentMotorcycleMilage={motorcycle.currentMilage}
-                />
-              ))}
-            </div>
-            <Link href={`${id}/add`} className="underline">
-              Add new item
-            </Link>
-            <DeleteMotorcycleButton id={id} />
-          </>
-        ) : (
-          <p>Not found :(</p>
-        )}
+    <div className="w-full max-w-5xl flex flex-col items-start p-4">
+      <div className="w-full flex justify-between items-center">
+        <div>
+          <h3 className="text-3xl font-semibold">
+            {motorcycle?.motorcycleName}
+          </h3>
+          <div className="flex items-center gap-2">
+            <MilageDisplay initialMilage={motorcycle.currentMilage} />
+          </div>
+        </div>
+        <div>
+          <MotorMenu id={id} />
+        </div>
       </div>
-    </section>
+      <h4 className="text-2xl mt-8">Service Items:</h4>
+      <div className="flex flex-col gap-4 my-4 w-full">
+        {motorcycle.serviceItem.map((serviceItem: ServiceItem) => (
+          <ServiceItemCard
+            key={serviceItem.title}
+            serviceItem={serviceItem}
+            motorcycleId={motorcycle.id}
+            currentMotorcycleMilage={motorcycle.currentMilage}
+          />
+        ))}
+      </div>
+      <Link href={`${id}/add`} className="underline">
+        Add new item
+      </Link>
+      <DeleteMotorcycleButton title={motorcycle.motorcycleName} id={id} />
+    </div>
   );
 }
 

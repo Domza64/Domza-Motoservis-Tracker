@@ -3,7 +3,6 @@ import LoginScreen from "@/component/LoginScreen";
 import MotorcycleCard from "@/component/MotorcycleCard";
 import dbConnect from "@/lib/dbConnect";
 import UserModel, { IUserModel } from "@/model/UserModel";
-import Link from "next/link";
 
 export default async function DashboardLayout({
   children,
@@ -23,13 +22,13 @@ export default async function DashboardLayout({
   const bikes = JSON.parse(JSON.stringify(userData.bikes));
 
   return (
-    <main className="flex items-center flex-col">
-      <section className="w-full max-w-5xl py-32">
+    <main className="flex justify-between items-center flex-col flex-1">
+      <section className="w-full max-w-5xl my-16 p-4">
         <h1 className="text-3xl font-semibold">
           Welcome {session?.user.name}!
         </h1>
         <h2 className="text-xl font-semibold mt-4">My garage:</h2>
-        <div className="flex gap-4">
+        <div className="flex gap-4 flex-wrap">
           {Object.entries(bikes).map(([id, text]) => (
             <MotorcycleCard key={id} text={text as string} id={id} />
           ))}

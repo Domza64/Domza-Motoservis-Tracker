@@ -44,6 +44,7 @@ export async function addServiceItem(prevState: any, formData: FormData) {
       title: formData.get("title"),
       lastService: formData.get("lastService"),
       lastServiceDate: formData.get("lastServiceDate"),
+      serviceInterval: formData.get("serviceInterval"),
       serviceIntervalDays: 0,
     };
 
@@ -67,42 +68,6 @@ export async function addServiceItem(prevState: any, formData: FormData) {
 
     revalidatePath("/dashboard");
     return { success: true };
-  } catch (error) {
-    console.error("Error adding service item: ", error);
-    return { success: false };
-  }
-}
-
-export async function addMotorcycle(prevState: any, formData: FormData) {
-  try {
-    await dbConnect();
-    const session = await auth();
-    const userEmail = session?.user?.email;
-
-    const newMotorcycle = {
-      motorcycleName: formData.get("motorcycleName"),
-      currentMilage: formData.get("currentMilage"),
-      serviceItem: [],
-    };
-
-    const newMotorcycleResponse = await MotorcycleModel.create(newMotorcycle);
-
-    await UserModel.findOneAndUpdate(
-      {
-        email: userEmail,
-      },
-      {
-        $set: {
-          [`bikes.${newMotorcycleResponse._id}`]:
-            newMotorcycleResponse.motorcycleName,
-        },
-      },
-      { new: true, useFindAndModify: false }
-    );
-
-    revalidatePath("/dashboard");
-
-    return { success: true, id: newMotorcycleResponse._id };
   } catch (error) {
     console.error("Error adding service item: ", error);
     return { success: false };
@@ -142,7 +107,43 @@ export async function deleteServiceItem(formData: FormData) {
   }
 }
 
-export async function deleteMotorcycle(prevState: any, formData: FormData) {
+export async function addMotorcycle(prevState: any, formData: FormData) {
+  try {
+    await dbConnect();
+    const session = await auth();
+    const userEmail = session?.user?.email;
+
+    const newMotorcycle = {
+      motorcycleName: formData.get("motorcycleName"),
+      currentMilage: formData.get("currentMilage"),
+      serviceItem: [],
+    };
+
+    const newMotorcycleResponse = await MotorcycleModel.create(newMotorcycle);
+
+    await UserModel.findOneAndUpdate(
+      {
+        email: userEmail,
+      },
+      {
+        $set: {
+          [`bikes.${newMotorcycleResponse._id}`]:
+            newMotorcycleResponse.motorcycleName,
+        },
+      },
+      { new: true, useFindAndModify: false }
+    );
+
+    revalidatePath("/dashboard");
+
+    return { success: true, id: newMotorcycleResponse._id };
+  } catch (error) {
+    console.error("Error adding service item: ", error);
+    return { success: false };
+  }
+}
+
+export async function deleteMotorcycle(formData: FormData) {
   try {
     const session = await auth();
     const email = session?.user?.email;
@@ -173,8 +174,9 @@ export async function deleteMotorcycle(prevState: any, formData: FormData) {
     }
 
     revalidatePath("/dashboard");
+
     // Return success response
-    return { success: true, message: "Bike successfully deleted." };
+    return { success: true, id: id };
   } catch (error) {
     console.error("Error deleting motorcycle: ", error);
     return { success: false };

@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import Header from "@/component/Header";
 import Footer from "@/component/Footer";
+import { NextUIProvider } from "@nextui-org/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,16 +20,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={
-          inter.className + " min-h-screen flex flex-col justify-between"
-        }
-      >
-        <SessionProvider>
-          <Header />
-          {children}
-          <Footer />
-        </SessionProvider>
+      <body className={inter.className}>
+        <NextUIProvider className="min-h-screen flex flex-col justify-between">
+          <SessionProvider>
+            <Header />
+            {children}
+            <Footer />
+          </SessionProvider>
+        </NextUIProvider>
       </body>
     </html>
   );

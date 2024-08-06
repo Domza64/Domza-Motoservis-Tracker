@@ -1,18 +1,13 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function Home() {
   return (
     <main className="flex flex-col items-center bg-gradient-to-tl from-slate-900 to-black text-white min-h-screen">
-      <section className="mt-32 w-full flex flex-col items-center">
-        <div className="flex flex-col lg:flex-row w-full gap-48 justify-between max-w-6xl p-4">
-          <Image
-            src={"/motoservis.svg"}
-            alt={"Logo"}
-            height={450}
-            width={450}
-          />
-          <div className="w-full flex flex-col items-start mt-12">
+      <section className="mt-12 sm:mt-32 w-full flex flex-col items-center">
+        <div className="flex flex-col lg:flex-row items-center w-full gap-16 sm:gap-48 max-w-6xl p-4">
+          <Image width={420} height={420} alt="Logo" src="/motoservis.svg" />
+          <div className="w-full flex flex-col items-start sm:mt-12">
             <h1 className="text-5xl font-bold">
               Never Miss a Bike Check{" "}
               <span className="text-motoservis_red underline">again</span>!
