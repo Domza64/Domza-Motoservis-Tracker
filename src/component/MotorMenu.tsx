@@ -7,7 +7,6 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import Image from "next/image";
-import DeleteMotorcycleButton from "./DeleteMotorcycleButton";
 
 export default function MotorMenu({ id }: { id: string }) {
   const items = [

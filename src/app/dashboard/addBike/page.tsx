@@ -1,26 +1,47 @@
-"use client";
-
-import { addMotorcycle } from "@/app/Actions";
-import SubmitButton from "@/component/SubmitButton";
+import { auth } from "@/auth";
+import dbConnect from "@/lib/dbConnect";
+import MotorcycleModel from "@/model/MotorcycleModel";
+import UserModel from "@/model/UserModel";
 import { Input } from "@nextui-org/react";
 import { redirect } from "next/navigation";
-import { useEffect } from "react";
-import { useFormState } from "react-dom";
 
-export default function AddBike() {
-  const [state, formAction] = useFormState(addMotorcycle, undefined);
+export default async function AddBike() {
+  async function addMotorcycle(formData: FormData) {
+    "use server";
 
-  useEffect(() => {
-    if (state?.success) {
-      redirect(`/dashboard/${state.id}`);
-    }
-  }, [state]);
+    await dbConnect();
+    const session = await auth();
+    const userEmail = session?.user?.email;
+
+    const newMotorcycle = {
+      motorcycleName: formData.get("motorcycleName"),
+      currentMilage: formData.get("currentMilage"),
+      serviceItem: [],
+    };
+
+    const newMotorcycleResponse = await MotorcycleModel.create(newMotorcycle);
+
+    await UserModel.findOneAndUpdate(
+      {
+        email: userEmail,
+      },
+      {
+        $set: {
+          [`bikes.${newMotorcycleResponse._id}`]:
+            newMotorcycleResponse.motorcycleName,
+        },
+      },
+      { new: true, useFindAndModify: false }
+    );
+
+    redirect(`/dashboard/${newMotorcycleResponse._id}`);
+  }
 
   return (
     <div className="flex flex-col items-center w-full mb-24 p-4">
       <h3 className="text-xl font-bold mb-4">Add new Motorcycle</h3>
       <form
-        action={formAction}
+        action={addMotorcycle}
         className="flex gap-3 flex-col bg-slate-200 shadow-md max-w-lg p-4 rounded w-full"
       >
         <Input
@@ -44,7 +65,12 @@ export default function AddBike() {
             </div>
           }
         />
-        <SubmitButton className={"mt-4"} />
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          type="submit"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );

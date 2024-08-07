@@ -25,7 +25,7 @@ export default function RootLayout({
           <SessionProvider>
             <Header />
             {children}
-            <Footer />
+            {/*<Footer /> - No need for footer currently, might be added later */}
           </SessionProvider>
         </NextUIProvider>
       </body>

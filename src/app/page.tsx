@@ -44,11 +44,9 @@ export default async function Home() {
       >
         <div className="max-w-5xl w-full">
           <h2 className="text-4xl font-semibold">About</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam
-            assumenda accusantium eos libero earum eaque molestias voluptatibus
-            nihil in minima explicabo ipsum natus aut enim velit architecto,
-            eveniet reprehenderit dolore!
+          <p className="mt-2">
+            Motoservis Tracker is a service app that allows you to easily track
+            your services and get reminders when to do them.
           </p>
         </div>
       </section>

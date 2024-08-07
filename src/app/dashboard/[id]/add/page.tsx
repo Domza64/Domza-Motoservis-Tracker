@@ -1,26 +1,20 @@
-"use client";
-
 import { addServiceItem } from "@/app/Actions";
-import SubmitButton from "@/component/SubmitButton";
-import { redirect, useParams } from "next/navigation";
-import { useEffect } from "react";
-import { useFormState } from "react-dom";
 
-export default function AddServiceItemForm() {
-  const [state, formAction] = useFormState(addServiceItem, undefined);
-  const { id } = useParams();
+export default async function AddServiceItemForm({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const id = params.id;
 
-  useEffect(() => {
-    if (state?.success) {
-      redirect(`/dashboard/${id}`);
-    }
-  }, [state, id]);
+  // Get today's date in the format YYYY-MM-DD
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="flex flex-col items-center my-16">
       <h3 className="text-xl font-bold mb-4">Add new Service Item</h3>
       <form
-        action={formAction}
+        action={addServiceItem}
         className="flex gap-1 flex-col bg-slate-300 shadow-md max-w-lg p-4 rounded"
       >
         <input type="hidden" name="id" value={id} />
@@ -49,6 +43,7 @@ export default function AddServiceItemForm() {
           <span>*</span>
           <label htmlFor="lastServiceDate">Last service date</label>
           <input
+            max={today}
             type="date"
             name="lastServiceDate"
             id="lastServiceDate"
@@ -91,7 +86,9 @@ export default function AddServiceItemForm() {
             </div>
           </div>
         </div>
-        <SubmitButton />
+        <button className="bg-slate-600 hover:bg-slate-700 transition-all py-1 px-2 text-white font-bold">
+          Submit
+        </button>
       </form>
     </div>
   );

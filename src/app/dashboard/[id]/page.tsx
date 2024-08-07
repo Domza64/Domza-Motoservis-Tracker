@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import DeleteMotorcycleButton from "@/component/DeleteMotorcycleButton";
 import MilageDisplay from "@/component/MilageDisplay";
 import ServiceItemCard from "@/component/ServiceItemCard";
 import dbConnect from "@/lib/dbConnect";
@@ -10,6 +9,7 @@ import MotorcycleModel, {
 import UserModel from "@/model/UserModel";
 import Link from "next/link";
 import MotorMenu from "@/component/MotorMenu";
+import DeleteModal from "@/component/deleteModal/DeleteModal";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -27,7 +27,10 @@ export default async function Page({ params }: { params: { id: string } }) {
             {motorcycle?.motorcycleName}
           </h3>
           <div className="flex items-center gap-2">
-            <MilageDisplay initialMilage={motorcycle.currentMilage} />
+            <MilageDisplay
+              motorcycleId={id}
+              initialMilage={motorcycle.currentMilage}
+            />
           </div>
         </div>
         <div>
@@ -48,7 +51,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       <Link href={`${id}/add`} className="underline">
         Add new item
       </Link>
-      <DeleteMotorcycleButton title={motorcycle.motorcycleName} id={id} />
+      <DeleteModal title={motorcycle.motorcycleName} motorcycleId={id} />
     </div>
   );
 }

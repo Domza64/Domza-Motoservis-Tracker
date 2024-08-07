@@ -1,7 +1,5 @@
 "use client";
 
-import { deleteMotorcycle } from "@/app/Actions";
-import { useRouter } from "next/navigation";
 import {
   Button,
   Modal,
@@ -12,14 +10,19 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
+import { deleteMotorcycle, deleteServiceItem } from "@/app/Actions";
 
 interface Props {
-  id: string;
   title: string;
+  motorcycleId: string;
+  serviceItemId?: string;
 }
 
-export default function DeleteMotorcycleButton({ id, title }: Props) {
-  const router = useRouter();
+export default function DeleteModal({
+  title,
+  motorcycleId,
+  serviceItemId,
+}: Props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
@@ -28,7 +31,7 @@ export default function DeleteMotorcycleButton({ id, title }: Props) {
         onClick={onOpen}
         className="text-motoservis_red hover:text-motoservis_red_dark transition-all"
       >
-        Delete Motorcycle
+        {serviceItemId ? "Delete Service Item" : "Delete Motorcycle"}
       </button>
       <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
@@ -40,24 +43,34 @@ export default function DeleteMotorcycleButton({ id, title }: Props) {
               </ModalHeader>
               <ModalBody>
                 <p>
-                  Are you sure you want to delete the <b>{title}</b> motorcycle?
+                  Are you sure you want to delete the <b>{title}</b>?
                   <br />
                   <span className="text-gray-500">
-                    This will remove all of your service data and it cannot be
-                    reversed.
+                    This will permenantly delete all of the data associated with{" "}
+                    {title} and it cannot be reversed.
                   </span>
                 </p>
               </ModalBody>
               <ModalFooter>
                 <form
-                  action={async (formData) => {
-                    await deleteMotorcycle(formData);
-                    router.push("/dashboard");
-                  }}
+                  action={serviceItemId ? deleteServiceItem : deleteMotorcycle}
                 >
-                  <input type="hidden" value={id} name="id" id={id} />
-                  <Button type="submit" color="danger" variant="light">
-                    Deletea
+                  <input
+                    type="hidden"
+                    name="motorcycleId"
+                    value={motorcycleId}
+                  />
+                  <input
+                    type="hidden"
+                    name="serviceItemId"
+                    value={serviceItemId}
+                  />
+                  <Button
+                    onPress={onClose}
+                    className="bg-motoservis_red text-white"
+                    type="submit"
+                  >
+                    Delete
                   </Button>
                 </form>
                 <Button className="bg-slate-400 text-white" onPress={onClose}>

@@ -21,7 +21,7 @@ export default function UserDropdown({
         <div className="flex gap-3 items-center hover:cursor-pointer">
           <span className="hidden sm:block select-none">{username}</span>
           <img
-            className="rounded-full border-motoservis_red border-1 p-0.5"
+            className="rounded-full border-motoservis_red border-2 p-0.5"
             src={img}
             width={45}
             height={45}

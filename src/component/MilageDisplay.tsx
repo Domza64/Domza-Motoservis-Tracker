@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 
 interface Props {
   initialMilage: number;
+  motorcycleId: string;
 }
 
-export default function MilageDisplay({ initialMilage }: Props) {
+export default function MilageDisplay({ initialMilage, motorcycleId }: Props) {
   const [milage, setMilageState] = useState(initialMilage);
   const [editMilage, setEditMilage] = useState(false);
 
@@ -29,6 +30,7 @@ export default function MilageDisplay({ initialMilage }: Props) {
               Selected milage is lower than your current milage!
             </span>
           )}
+          <input hidden value={motorcycleId} name="motorcycleId" />
           <input
             className={`bg-gray-200 ${
               milage < initialMilage ? "border-red-500 border-2" : ""
