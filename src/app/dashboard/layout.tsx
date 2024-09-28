@@ -11,6 +11,15 @@ export default async function DashboardLayout({
 }) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
+
+  if (!user) {
+    return (
+      <main className="flex justify-center items-center h-screen">
+        <h1>Please log in to view your dashboard.</h1>
+      </main>
+    );
+  }
+
   const userData: IUserModel = await getData(user.id);
 
   return (
