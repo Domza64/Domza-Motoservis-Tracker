@@ -18,6 +18,7 @@ export default async function ServiceItemCard({
 
   const serviceInterval = serviceItem.serviceInterval;
   const sinceLastService =
+    // @ts-ignore
     currentMotorcycleMilage - serviceItem.services.at(-1)?.lastService;
   const serviceNeeded = sinceLastService >= serviceInterval;
   const untilNextService = serviceInterval - sinceLastService;
