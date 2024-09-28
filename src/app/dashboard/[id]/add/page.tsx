@@ -1,6 +1,6 @@
 import { addServiceItem } from "@/app/Actions";
 
-export default async function AddServiceItemForm({
+export default async function AddServiceItemPage({
   params,
 }: {
   params: { id: string };

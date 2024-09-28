@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import LogoutButton from "./LogoutButton";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 
 export default function UserDropdown({
   img,
@@ -31,7 +31,7 @@ export default function UserDropdown({
       </DropdownTrigger>
       <DropdownMenu>
         <DropdownItem key="logout">
-          <LogoutButton />
+          <LogoutLink>Log out</LogoutLink>
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>

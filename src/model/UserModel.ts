@@ -1,23 +1,28 @@
 import mongoose from "mongoose";
 
-export interface IUserModel extends mongoose.Document {
-  email: string;
-  bikes: Record<string, string>;
+export interface MotorcycleModel extends mongoose.Document {
+  motorcycleName: string;
 }
 
+export interface IUserModel extends mongoose.Document {
+  authId: string;
+  bikes: MotorcycleModel[];
+}
+
+const MotorcycleSchema = new mongoose.Schema<MotorcycleModel>({
+  motorcycleName: { type: String, required: true },
+});
+
 const UserModelSchema = new mongoose.Schema<IUserModel>({
-  email: {
+  authId: {
     type: String,
     required: true,
-    maxlength: [60, "Cannot be more than 60 characters"],
     unique: true,
-    indexedDB: true,
+    indexed: true,
   },
   bikes: {
-    type: Map,
-    of: String,
-    required: true,
-    default: {},
+    type: [MotorcycleSchema],
+    default: [],
   },
 });
 

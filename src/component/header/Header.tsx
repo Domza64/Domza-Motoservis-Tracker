@@ -1,13 +1,15 @@
-import { auth } from "@/auth";
 import Link from "next/link";
-import LogoutButton from "./LogoutButton";
-import LoginButton from "./LoginButton";
-import { Avatar } from "@nextui-org/react";
-import Image from "next/image";
 import UserDropdown from "./UserDropdown";
+import {
+  getKindeServerSession,
+  LoginLink,
+  LogoutLink,
+} from "@kinde-oss/kinde-auth-nextjs/server";
 
 export default async function Header() {
-  const session = await auth();
+  const { getUser, isAuthenticated } = getKindeServerSession();
+  const isUserAuthenticated = await isAuthenticated();
+  const user = await getUser();
 
   return (
     <header className="w-full flex justify-center p-4 bg-black text-white">
@@ -18,13 +20,15 @@ export default async function Header() {
           <Link href={"/#about"}>About</Link>
         </nav>
         <div>
-          {session ? (
+          {isUserAuthenticated ? (
             <UserDropdown
-              img={session?.user?.image as string}
-              username={session?.user?.name as string}
+              img={user.picture as string}
+              username={user?.username as string}
             />
           ) : (
-            <LoginButton />
+            <>
+              <LoginLink>Sign in</LoginLink>
+            </>
           )}
         </div>
       </div>

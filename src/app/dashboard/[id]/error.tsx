@@ -15,7 +15,7 @@ export default function Error({
 
   return (
     <div>
-      <h2>Motorcycle not found!</h2>
+      <h2>Error: {error.message}</h2>
       <button onClick={() => reset()}>Try again</button>
     </div>
   );

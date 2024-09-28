@@ -1,7 +1,7 @@
-import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
-import MotorcycleModel from "@/model/MotorcycleModel";
+import TrackedServicesModel from "@/model/TrackedServicesModel";
 import UserModel from "@/model/UserModel";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Input } from "@nextui-org/react";
 import { redirect } from "next/navigation";
 
@@ -10,31 +10,44 @@ export default async function AddBike() {
     "use server";
 
     await dbConnect();
-    const session = await auth();
-    const userEmail = session?.user?.email;
 
+    // Get the authenticated user's email
+    const { getUser } = getKindeServerSession();
+    const authenticatedUser = await getUser();
+    const authId = authenticatedUser.id;
+
+    // Get form data
+    const motorcycleName = formData.get("motorcycleName") as string;
+    const currentMilage: number = parseInt(
+      formData.get("currentMilage") as string,
+      10
+    );
+
+    // Create the new motorcycle object first
     const newMotorcycle = {
-      motorcycleName: formData.get("motorcycleName"),
-      currentMilage: formData.get("currentMilage"),
-      serviceItem: [],
+      motorcycleName,
     };
 
-    const newMotorcycleResponse = await MotorcycleModel.create(newMotorcycle);
-
-    await UserModel.findOneAndUpdate(
+    // Save the motorcycle to the database and get its ID
+    const userModel = await UserModel.findOneAndUpdate(
+      { authId: authId },
       {
-        email: userEmail,
-      },
-      {
-        $set: {
-          [`bikes.${newMotorcycleResponse._id}`]:
-            newMotorcycleResponse.motorcycleName,
-        },
+        $push: { bikes: newMotorcycle },
       },
       { new: true, useFindAndModify: false }
     );
 
-    redirect(`/dashboard/${newMotorcycleResponse._id}`);
+    const motorcycleId = userModel.bikes[userModel.bikes.length - 1]._id;
+
+    // Create a new tracked services entry with the motorcycleId
+    await TrackedServicesModel.create({
+      _id: motorcycleId,
+      milage: [{ milage: currentMilage, date: new Date() }],
+      ownerId: authId,
+    });
+
+    // Redirect to the motorcycle's dashboard page
+    redirect(`/dashboard/${motorcycleId}`);
   }
 
   return (
