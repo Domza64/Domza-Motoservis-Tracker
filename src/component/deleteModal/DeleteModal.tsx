@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { deleteMotorcycle, deleteServiceItem } from "@/app/Actions";
+import Image from "next/image";
 
 interface Props {
   title: string;
@@ -29,9 +30,14 @@ export default function DeleteModal({
     <>
       <button
         onClick={onOpen}
-        className="text-motoservis_red hover:text-motoservis_red_dark transition-all"
+        className="text-motoservis_red hover:text-motoservis_red_dark transition-all hover:bg-gray-200 rounded-lg"
       >
-        {serviceItemId ? "Delete Service Item" : "Delete Motorcycle"}
+        <Image
+          src={"/icon/delete.svg"}
+          alt={"Delete icon"}
+          width={32}
+          height={32}
+        />
       </button>
       <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>

@@ -21,7 +21,7 @@ export default function MotorcycleCard({ text, id }: Props) {
         href={url}
         className={`${
           selectedId == id ? "border-motoservis_red border-2 " : ""
-        } w-full h-full flex justify-center items-center text-center`}
+        } w-full h-full flex justify-center items-center text-center bg-[url('/image/custom_image.jpega')] bg-cover bg-center rounded-md font-bold`}
       >
         {text}
       </Link>

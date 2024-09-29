@@ -1,4 +1,3 @@
-import ServiceItemCard from "@/component/dashboard/cards/ServiceItemCard";
 import dbConnect from "@/lib/dbConnect";
 import Link from "next/link";
 import MotorMenu from "@/component/dashboard/MotorMenu";
@@ -8,6 +7,7 @@ import MilageDisplay from "@/component/dashboard/MilageDisplay";
 import TrackedServicesModel, {
   ServiceItem,
 } from "@/model/TrackedServicesModel";
+import ServiceItemCard from "@/component/dashboard/cards/ServiceItemCard/ServiceItemCard";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -28,11 +28,11 @@ export default async function Page({ params }: { params: { id: string } }) {
           </div>
         </div>
         <div>
-          <MotorMenu id={id} />
+          <MotorMenu id={id} motorcycleName={trackedServices.motorcycleName} />
         </div>
       </div>
       <h4 className="text-2xl mt-8">Service Items:</h4>
-      <div className="flex flex-col gap-4 my-4 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4 w-full">
         {trackedServices.serviceItem.map((serviceItem: ServiceItem) => (
           <ServiceItemCard
             key={serviceItem.title}
@@ -41,10 +41,10 @@ export default async function Page({ params }: { params: { id: string } }) {
             currentMotorcycleMilage={trackedServices.milage.at(-1)?.milage || 0}
           />
         ))}
+        <Link href={`${id}/add`} className="underline order-last">
+          Add new item
+        </Link>
       </div>
-      <Link href={`${id}/add`} className="underline">
-        Add new item
-      </Link>
       <DeleteModal title={trackedServices.motorcycleName} motorcycleId={id} />
     </div>
   );

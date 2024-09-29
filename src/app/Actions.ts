@@ -32,6 +32,70 @@ export async function setMilage(formData: FormData) {
   revalidatePath(`/dashboard/${id}`);
 }
 
+const totalDays = (formData: FormData) => {
+  const daysEntryValue = formData.get("intervalValueDays"); // Get the entry value
+  const days: number | null = daysEntryValue ? Number(daysEntryValue) : null; // Convert to number or null
+  const type: string = formData.get("intervalType") as string; // Cast to string
+
+  let totalDays: number | null = null; // Variable to store the total days
+
+  // Calculate total days based on the type
+  if (days !== null) {
+    switch (type) {
+      case "d": // If the type is days
+        totalDays = days;
+        break;
+      case "m": // If the type is months
+        totalDays = days * 30; // Approximate days in a month
+        break;
+      case "y": // If the type is years
+        totalDays = days * 365; // Approximate days in a year
+        break;
+      default:
+        console.error("Unknown interval type");
+    }
+  }
+  return totalDays;
+};
+
+export async function updateServiceItem(formData: FormData) {
+  // Connect to the database
+  await dbConnect();
+
+  // Get user details
+  const { getUser } = getKindeServerSession();
+  const authenticatedUser = await getUser();
+
+  // Extract the serviceItemId from the form data
+  const serviceItemId = formData.get("serviceItemId") as string;
+
+  const updateFields = {
+    title: (formData.get("title") as string) || "Default Title", // Type assertion and default value
+    serviceInterval: parseFloat(formData.get("serviceInterval") as string) || 0, // Default to 0 if not provided
+    serviceIntervalDays: totalDays(formData),
+  };
+  // Get the id of the parent service document
+  const id = formData.get("id") as string;
+
+  // Update the service item
+  const test = await TrackedServicesModel.updateOne(
+    {
+      _id: id,
+      ownerId: authenticatedUser.id, // Ensure ownerId matches authenticatedUser's ID
+      "serviceItem._id": serviceItemId, // Ensure we are updating the correct service item
+    },
+    {
+      $set: {
+        [`serviceItem.$.title`]: updateFields.title, // Update the title in the matched service item
+        [`serviceItem.$.serviceInterval`]: updateFields.serviceInterval, // Update the serviceInterval
+        [`serviceItem.$.serviceIntervalDays`]: updateFields.serviceIntervalDays, // Update the serviceIntervalDays
+      },
+    }
+  );
+
+  redirect(`/dashboard/${id}`);
+}
+
 export async function addServiceItem(formData: FormData) {
   // Connect to db
   await dbConnect();
@@ -39,10 +103,6 @@ export async function addServiceItem(formData: FormData) {
   // Get user details
   const { getUser } = getKindeServerSession();
   const authenticatedUser = await getUser();
-
-  // TODO - Calculate days from this data
-  //serviceInterval: formData.get("serviceInterval") || undefined,
-  //serviceIntervalDate: formData.get("serviceIntervalDate") || undefined,
 
   const id = formData.get("id") as string;
 
@@ -55,6 +115,7 @@ export async function addServiceItem(formData: FormData) {
       },
     ],
     serviceInterval: parseFloat(formData.get("serviceInterval") as string) || 0, // Default to 0 if not provided
+    serviceIntervalDays: totalDays(formData),
   };
 
   await TrackedServicesModel.findOneAndUpdate(
@@ -148,7 +209,6 @@ export async function setServiced(formData: FormData) {
       useFindAndModify: false,
     }
   );
-  console.log(updatedTrackedService);
 
   // Revalidate the path for the dashboard
   revalidatePath(`/dashboard/${motorcycleId}`);

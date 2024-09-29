@@ -14,6 +14,7 @@ export interface ServiceItem {
   title: string;
   services: Service[];
   serviceInterval: number;
+  serviceIntervalDays: number;
 }
 
 export interface ITrackedServicesModel extends mongoose.Document {
@@ -40,6 +41,10 @@ const ServiceItemSchema = new mongoose.Schema({
     },
   ],
   serviceInterval: {
+    type: Number,
+    required: true,
+  },
+  serviceIntervalDays: {
     type: Number,
     required: true,
   },
