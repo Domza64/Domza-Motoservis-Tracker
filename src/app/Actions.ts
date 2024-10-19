@@ -190,7 +190,7 @@ export async function setServiced(formData: FormData) {
   const motorcycleId = formData.get("motorcycleId") as string;
 
   // Update the service item with the new mileage and date
-  const updatedTrackedService = await TrackedServicesModel.findOneAndUpdate(
+  await TrackedServicesModel.findOneAndUpdate(
     {
       _id: motorcycleId,
       ownerId: authenticatedUser.id,
@@ -199,8 +199,9 @@ export async function setServiced(formData: FormData) {
     {
       $push: {
         "serviceItem.$.services": {
-          lastService: parseFloat(currentMilage) || 0,
-          date: new Date(),
+          servicedAt: parseFloat(currentMilage) || 0,
+          serviceDate: new Date(),
+          test: "test",
         },
       },
     },
@@ -212,4 +213,35 @@ export async function setServiced(formData: FormData) {
 
   // Revalidate the path for the dashboard
   revalidatePath(`/dashboard/${motorcycleId}`);
+}
+
+export async function deleteServiceRecord(
+  bikeId: string,
+  trackedServiceItemId: string,
+  serviceRecordId: string
+) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  await dbConnect();
+
+  try {
+    await TrackedServicesModel.updateOne(
+      {
+        ownerId: user.id, // Match the owner
+        serviceItem: {
+          $elemMatch: { _id: trackedServiceItemId }, // Find the specific service item by its ID
+        },
+      },
+      {
+        $pull: {
+          "serviceItem.$.services": { _id: serviceRecordId },
+        },
+      }
+    );
+
+    revalidatePath(`/dashboard/${bikeId}/service-item/${trackedServiceItemId}`);
+  } catch (error) {
+    console.error("Error fetching bike:", error);
+  }
 }

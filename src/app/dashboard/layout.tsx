@@ -25,8 +25,10 @@ export default async function DashboardLayout({
   return (
     <main className="flex justify-between items-center flex-col flex-1">
       <section className="w-full max-w-5xl my-16 p-4">
-        <h1 className="text-3xl font-semibold">Welcome {user.username}</h1>
-        <h2 className="text-xl font-semibold mt-4">My garage:</h2>
+        <h1 className="text-3xl font-semibold">
+          Welcome back {user.username}!
+        </h1>
+        <h2 className="text-xl font-semibold mt-4 mb-2">My garage:</h2>
         <div className="flex gap-4 flex-wrap">
           {userData.bikes.map((motorcycle: MotorcycleModel) => (
             <MotorcycleCard

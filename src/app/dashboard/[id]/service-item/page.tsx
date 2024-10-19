@@ -21,7 +21,6 @@ export default async function AddServiceItemPage({
   var data: ServiceItem | undefined = undefined;
   if (serviceItemId) {
     data = await getData(id, serviceItemId);
-    console.log(data);
   }
 
   return (

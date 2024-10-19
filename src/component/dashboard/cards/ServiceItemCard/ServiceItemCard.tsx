@@ -18,62 +18,69 @@ export default async function ServiceItemCard({
   // @ts-ignore
   const id = serviceItem._id.toString();
 
-  const serviceInterval = serviceItem.serviceInterval;
-  const sinceLastService =
-    // @ts-ignore
-    currentMotorcycleMilage - serviceItem.services.at(-1)?.lastService;
-  const serviceNeeded = sinceLastService >= serviceInterval;
-  const untilNextService = serviceInterval - sinceLastService;
+  // Destructure properties for better readability
+  const { serviceInterval, serviceIntervalDays, services } = serviceItem;
 
-  var untilNextServiceDays = undefined;
-  const lastServiceDate = serviceItem.services.at(-1)?.date || new Date();
-  const currentDate = new Date();
-  if (lastServiceDate) {
-    // Calculate the time difference in milliseconds
-    const timeDifference =
-      currentDate.getTime() - new Date(lastServiceDate).getTime();
-    // Convert the time difference from milliseconds to days
-    const daysSinceLastService = Math.floor(
-      timeDifference / (1000 * 60 * 60 * 24)
-    );
-    untilNextServiceDays =
-      daysSinceLastService - serviceItem.serviceIntervalDays;
+  // Calculate mileage since last service
+  const lastService = services.at(-1);
+  const sinceLastService = lastService
+    ? currentMotorcycleMilage - lastService.servicedAt
+    : 0;
+
+  // Determine if service is needed based on mileage
+  const isServiceDue = sinceLastService >= serviceInterval;
+
+  // Initialize variables for remaining kilometers and days until next service
+  const kmUntilNextService = lastService
+    ? serviceInterval - sinceLastService
+    : undefined;
+  let daysUntilNextService: number | undefined;
+
+  // Check if last service exists to calculate days until next service
+  if (lastService) {
+    const lastServiceDate = new Date(lastService.serviceDate);
+    const daysSinceLastService = daysAgo(lastServiceDate);
+    daysUntilNextService = daysSinceLastService - serviceIntervalDays;
+
+    // Calculate if the service is overdue based on days
+    if (serviceIntervalDays && daysUntilNextService < 0) {
+      daysUntilNextService = undefined; // Reset if the calculation is invalid
+    }
   }
 
   return (
     <div
       className={`rounded bg-white py-2 px-4 shadow-md flex flex-col justify-between w-full ${
-        serviceNeeded ? "border-primary border-2 order-1" : "order-2"
+        isServiceDue ? "border-primary border-2 order-1" : "order-2"
       }`}
     >
       <div className="flex justify-between items-start">
         <div>
-          {" "}
           <p className="font-bold text-xl">{serviceItem.title}</p>
-          <p>
-            <span className="font-semibold">Since last service:</span>{" "}
-            {sinceLastService + " km"}
-          </p>
-          <p>
-            <span className="font-semibold">Service every: </span>{" "}
-            {serviceInterval} km
-          </p>
-          {serviceItem.serviceIntervalDays && (
-            <p>
-              <span className="font-semibold">Service every: </span>{" "}
-              {serviceItem.serviceIntervalDays} days
-            </p>
+          {lastService ? (
+            <>
+              <>
+                <span className="font-semibold">Since last service:</span>{" "}
+                {sinceLastService + " km"},{" "}
+                <span>{daysAgo(new Date(lastService.serviceDate))} days</span>
+              </>
+              <p>
+                <span className="font-semibold">Last service: </span>{" "}
+                {lastService.servicedAt} km,{" "}
+                {formatDate(lastService.serviceDate)}
+              </p>
+            </>
+          ) : (
+            <p>No service records available.</p>
           )}
-          <p>
-            <span className="font-semibold">Last service at: </span>{" "}
-            {/* TODO - show last not one at index 0 */}
-            {serviceItem.services.at(-1)?.lastService} km
-          </p>
-          <p>
-            <span className="font-semibold">
-              Last service {daysAgo(lastServiceDate)} days ago.
-            </span>
-          </p>
+          <hr className="my-1 border-slate-600" />
+          {(serviceInterval || serviceIntervalDays) && (
+            <>
+              <span className="font-semibold">Service interval: </span>
+              {serviceIntervalDays && <span>{serviceIntervalDays} days,</span>}
+              {serviceInterval && <span> {serviceInterval} km</span>}
+            </>
+          )}
         </div>
         <div className="flex flex-col h-full justify-between items-end">
           <div className="flex gap-1 justify-center items-center">
@@ -127,7 +134,7 @@ export default async function ServiceItemCard({
       </div>
       <hr className="border-slate-600 my-2" />
       <div className="w-full flex justify-between items-end">
-        {serviceNeeded ? (
+        {isServiceDue ? (
           <div className="p-1">
             <Image
               src={"/icon/warning.svg"}
@@ -138,14 +145,12 @@ export default async function ServiceItemCard({
             <span>Service needed</span>
             <br />
             <span className="font-normal">
-              since: {sinceLastService - serviceItem.serviceInterval + " km"}
+              since:{" "}
+              {lastService ? sinceLastService - serviceInterval + " km" : "N/A"}
             </span>
             <br />
             <span className="font-normal">
-              since:{" "}
-              {daysAgo(lastServiceDate) -
-                serviceItem.serviceIntervalDays +
-                " days"}
+              since: {lastService ? daysUntilNextService + " days" : "N/A"}
             </span>
           </div>
         ) : (
@@ -163,16 +168,20 @@ export default async function ServiceItemCard({
             </div>
             <div className="flex flex-col">
               <span>
-                <b>{untilNextService} km </b>until next service is needed.
+                <b>
+                  {kmUntilNextService !== undefined
+                    ? kmUntilNextService
+                    : "N/A"}{" "}
+                  km{" "}
+                </b>
+                until next service is needed.
               </span>
-              {untilNextServiceDays ? (
+              {daysUntilNextService !== undefined ? (
                 <span>
-                  <b>{untilNextServiceDays} days </b>until next service is
+                  <b>{daysUntilNextService} days </b>until next service is
                   needed.
                 </span>
-              ) : (
-                <></>
-              )}
+              ) : null}
             </div>
           </div>
         )}
@@ -186,9 +195,19 @@ export default async function ServiceItemCard({
   );
 }
 
+// Utility function to calculate days since a given date
 function daysAgo(date: Date): number {
   const today = new Date(); // Get the current date
   const timeDifference = today.getTime() - date.getTime(); // Calculate the time difference in milliseconds
   const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
   return daysDifference;
+}
+
+function formatDate(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  };
+  return date.toLocaleDateString("en-GB", options).replace(/,/g, "");
 }

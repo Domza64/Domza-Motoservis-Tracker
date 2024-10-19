@@ -44,6 +44,7 @@ export default async function AddBike() {
       _id: motorcycleId,
       milage: [{ milage: currentMilage, date: new Date() }],
       ownerId: authId,
+      motorcycleName: motorcycleName,
     });
 
     // Redirect to the motorcycle's dashboard page

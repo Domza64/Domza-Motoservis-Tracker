@@ -12,14 +12,13 @@ export default async function AddServiceItemPage({
 
   return (
     <div className="flex flex-col items-center my-16">
-      <h3 className="text-xl font-bold mb-4">Add new Service Item</h3>
       <form
         action={addServiceItem}
         className="flex gap-1 flex-col bg-slate-300 shadow-md max-w-lg p-4 rounded"
       >
+        <h3 className="text-xl font-bold mb-4">Add new Tracked Service Item</h3>
         <input type="hidden" name="id" value={id} />
         <div>
-          <span>*</span>
           <input
             type="text"
             name="title"
@@ -29,7 +28,6 @@ export default async function AddServiceItemPage({
           />
         </div>
         <div>
-          <span>*</span>
           <input
             type="number"
             min="0"
@@ -40,10 +38,10 @@ export default async function AddServiceItemPage({
           />
         </div>
         <div>
-          <span>*</span>
           <label htmlFor="lastServiceDate">Last service date</label>
           <input
             max={today}
+            defaultValue={today}
             type="date"
             name="lastServiceDate"
             id="lastServiceDate"
@@ -56,7 +54,7 @@ export default async function AddServiceItemPage({
           type="number"
           name="serviceInterval"
           id="serviceInterval"
-          min="0"
+          min="1"
           placeholder="Should service every: 'X' km"
         />
         <hr className="border-slate-600 my-1" />

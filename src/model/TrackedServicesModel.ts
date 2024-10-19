@@ -5,14 +5,14 @@ interface DateTrackedMilage {
   milage: number;
 }
 
-interface Service {
-  date: Date;
-  lastService: number;
+export interface ServiceTime {
+  serviceDate: Date;
+  servicedAt: number; // km
 }
 
 export interface ServiceItem {
   title: string;
-  services: Service[];
+  services: ServiceTime[];
   serviceInterval: number;
   serviceIntervalDays: number;
 }
@@ -21,6 +21,7 @@ export interface ITrackedServicesModel extends mongoose.Document {
   serviceItem: ServiceItem[];
   ownerId: string;
   milage: DateTrackedMilage[];
+  motorcycleName: string;
 }
 
 const ServiceItemSchema = new mongoose.Schema({
@@ -30,11 +31,11 @@ const ServiceItemSchema = new mongoose.Schema({
   },
   services: [
     {
-      date: {
+      serviceDate: {
         type: Date,
         required: true,
       },
-      lastService: {
+      servicedAt: {
         type: Number,
         required: true,
       },
@@ -65,6 +66,10 @@ const TrackedServicesSchema = new mongoose.Schema<ITrackedServicesModel>({
     type: String,
     required: true,
     index: true,
+  },
+  motorcycleName: {
+    type: String,
+    required: true,
   },
 });
 
