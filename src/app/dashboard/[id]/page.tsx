@@ -1,6 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
 import Link from "next/link";
-import MotorMenu from "@/component/dashboard/MotorMenu";
 import DeleteModal from "@/component/deleteModal/DeleteModal";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import MilageDisplay from "@/component/dashboard/MilageDisplay";
@@ -14,42 +13,40 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const id = (await params).id;
-  const trackedServices = await getData(id);
+  const motorcycleid = (await params).id;
+  const { motorcycleName, milage, serviceItem, id } = await getData(
+    motorcycleid
+  );
 
   return (
     <div className="w-full max-w-5xl flex flex-col items-start p-4">
       <div className="w-full flex justify-between items-center">
         <div>
-          <h3 className="text-3xl font-semibold">
-            {trackedServices?.motorcycleName}
-          </h3>
+          <h3 className="text-3xl font-semibold">{motorcycleName}</h3>
           <div className="flex items-center gap-2">
             <MilageDisplay
-              motorcycleId={id}
-              initialMilage={trackedServices.milage.at(-1)?.milage}
+              motorcycleId={motorcycleid}
+              initialMilage={milage.at(-1)?.milage}
             />
           </div>
-        </div>
-        <div>
-          <MotorMenu id={id} motorcycleName={trackedServices.motorcycleName} />
         </div>
       </div>
       <h4 className="text-2xl mt-8">Service Items:</h4>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4 w-full">
-        {trackedServices.serviceItem.map((serviceItem: ServiceItem) => (
+        {serviceItem.map((serviceItem: ServiceItem) => (
           <ServiceItemCard
             key={serviceItem.title}
             serviceItem={serviceItem}
-            motorcycleId={trackedServices.id}
-            currentMotorcycleMilage={trackedServices.milage.at(-1)?.milage || 0}
+            motorcycleId={id}
+            currentMotorcycleMilage={milage.at(-1)?.milage || 0}
           />
         ))}
-        <Link href={`${id}/add`} className="underline order-last">
+        <Link href={`${motorcycleid}/add`} className="underline order-last">
           Add new item
         </Link>
       </div>
-      <DeleteModal title={trackedServices.motorcycleName} motorcycleId={id} />
+      <span>Delete bike: </span>
+      <DeleteModal title={motorcycleName} motorcycleId={motorcycleid} />
     </div>
   );
 }
