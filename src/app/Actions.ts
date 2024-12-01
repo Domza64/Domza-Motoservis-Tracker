@@ -245,3 +245,77 @@ export async function deleteServiceRecord(
     console.error("Error fetching bike:", error);
   }
 }
+
+export async function updateServiceRecord(formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const serviceRecordId = formData.get("serviceRecordId") as string | undefined;
+  const trackedServiceItemId = formData.get("trackedServiceItemId") as string;
+  const bikeId = formData.get("bikeId") as string;
+  const date = formData.get("serviceDate") as string;
+  const mileage = Number(formData.get("servicedAt") as string);
+
+  await dbConnect();
+
+  try {
+    if (serviceRecordId == undefined) {
+      // Create a new tracked services record
+      await TrackedServicesModel.findOneAndUpdate(
+        {
+          ownerId: user.id,
+          "serviceItem._id": trackedServiceItemId,
+        },
+        {
+          $push: {
+            "serviceItem.$.services": {
+              $each: [{ servicedAt: mileage, serviceDate: date }],
+              $sort: { serviceDate: 1 },
+            },
+          },
+        }
+      );
+    } else {
+      // Update existing record
+      // Update existing record
+      await TrackedServicesModel.findOneAndUpdate(
+        {
+          ownerId: user.id,
+          "serviceItem._id": trackedServiceItemId,
+          "serviceItem.services._id": serviceRecordId,
+        },
+        {
+          $set: {
+            "serviceItem.$[outer].services.$[inner].servicedAt": mileage,
+            "serviceItem.$[outer].services.$[inner].serviceDate": date,
+          },
+        },
+        {
+          arrayFilters: [
+            { "outer._id": trackedServiceItemId },
+            { "inner._id": serviceRecordId },
+          ],
+        }
+      );
+
+      // Ensure the array is sorted after the update
+      await TrackedServicesModel.findOneAndUpdate(
+        {
+          ownerId: user.id,
+          "serviceItem._id": trackedServiceItemId,
+        },
+        {
+          $push: {
+            "serviceItem.$.services": {
+              $each: [],
+              $sort: { serviceDate: 1 },
+            },
+          },
+        }
+      );
+    }
+
+    revalidatePath(`/dashboard/${bikeId}/service-item/${trackedServiceItemId}`);
+  } catch (error) {
+    console.error("Error updating service record:", error);
+  }
+}

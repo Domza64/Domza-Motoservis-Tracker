@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 export interface MotorcycleModel extends mongoose.Document {
   motorcycleName: string;
+  imageUrl: string;
 }
 
 export interface IUserModel extends mongoose.Document {
@@ -11,6 +12,7 @@ export interface IUserModel extends mongoose.Document {
 
 const MotorcycleSchema = new mongoose.Schema<MotorcycleModel>({
   motorcycleName: { type: String, required: true },
+  imageUrl: { type: String, required: false },
 });
 
 const UserModelSchema = new mongoose.Schema<IUserModel>({

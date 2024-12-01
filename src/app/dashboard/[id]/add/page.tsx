@@ -3,9 +3,9 @@ import { addServiceItem } from "@/app/Actions";
 export default async function AddServiceItemPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const id = params.id;
+  const id = (await params).id;
 
   // Get today's date in the format YYYY-MM-DD
   const today = new Date().toISOString().split("T")[0];

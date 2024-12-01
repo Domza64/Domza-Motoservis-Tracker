@@ -2,7 +2,7 @@ import DeleteModal from "../../../deleteModal/DeleteModal";
 import { ServiceItem } from "@/model/TrackedServicesModel";
 import { setServiced } from "@/app/Actions";
 import Image from "next/image";
-import { Link } from "@nextui-org/react";
+import Link from "next/link";
 
 interface Props {
   serviceItem: ServiceItem;
@@ -40,7 +40,7 @@ export default async function ServiceItemCard({
   if (lastService) {
     const lastServiceDate = new Date(lastService.serviceDate);
     const daysSinceLastService = daysAgo(lastServiceDate);
-    daysUntilNextService = daysSinceLastService - serviceIntervalDays;
+    daysUntilNextService = serviceIntervalDays - daysSinceLastService;
 
     // Calculate if the service is overdue based on days
     if (serviceIntervalDays && daysUntilNextService < 0) {
@@ -168,20 +168,9 @@ export default async function ServiceItemCard({
             </div>
             <div className="flex flex-col">
               <span>
-                <b>
-                  {kmUntilNextService !== undefined
-                    ? kmUntilNextService
-                    : "N/A"}{" "}
-                  km{" "}
-                </b>
-                until next service is needed.
+                {kmUntilNextService} km, {daysUntilNextService} days until next
+                service is needed.
               </span>
-              {daysUntilNextService !== undefined ? (
-                <span>
-                  <b>{daysUntilNextService} days </b>until next service is
-                  needed.
-                </span>
-              ) : null}
             </div>
           </div>
         )}

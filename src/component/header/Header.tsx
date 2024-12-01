@@ -3,7 +3,6 @@ import UserDropdown from "./UserDropdown";
 import {
   getKindeServerSession,
   LoginLink,
-  LogoutLink,
 } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export default async function Header() {

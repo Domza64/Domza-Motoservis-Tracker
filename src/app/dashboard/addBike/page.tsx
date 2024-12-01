@@ -2,7 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import TrackedServicesModel from "@/model/TrackedServicesModel";
 import UserModel from "@/model/UserModel";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { Input } from "@nextui-org/react";
+import { put } from "@vercel/blob";
 import { redirect } from "next/navigation";
 
 export default async function AddBike() {
@@ -23,9 +23,21 @@ export default async function AddBike() {
       10
     );
 
+    // Handle the image upload
+    const imageFile = formData.get("image") as File;
+    let imageUrl = "";
+
+    if (imageFile) {
+      const { url } = await put(`motorcycles/${imageFile.name}`, imageFile, {
+        access: "public",
+      });
+      imageUrl = url; // Save the returned URL of the uploaded image
+    }
+
     // Create the new motorcycle object first
     const newMotorcycle = {
       motorcycleName,
+      imageUrl,
     };
 
     // Save the motorcycle to the database and get its ID
@@ -58,27 +70,19 @@ export default async function AddBike() {
         action={addMotorcycle}
         className="flex gap-3 flex-col bg-slate-200 shadow-md max-w-lg p-4 rounded w-full"
       >
-        <Input
+        <input
           name="motorcycleName"
           type="text"
-          label="Motorcycle"
           placeholder="Motorcycle model"
-          labelPlacement="outside"
         />
-        <Input
+        <input
           name="currentMilage"
           type="number"
-          label="Current Milage"
-          placeholder="0.00"
-          labelPlacement="outside"
+          placeholder="Current Milage"
           defaultValue="0"
           min={0}
-          endContent={
-            <div className="pointer-events-none flex items-center">
-              <span className="text-default-400 text-small">km</span>
-            </div>
-          }
         />
+        <input type="file" name="image" accept="image/*" />
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           type="submit"

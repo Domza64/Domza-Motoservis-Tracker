@@ -3,6 +3,7 @@ import MotorcycleCard from "@/component/dashboard/cards/MotorcycleCard";
 import dbConnect from "@/lib/dbConnect";
 import UserModel, { IUserModel, MotorcycleModel } from "@/model/UserModel";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { Suspense } from "react";
 
 export default async function DashboardLayout({
   children,
@@ -30,13 +31,16 @@ export default async function DashboardLayout({
         </h1>
         <h2 className="text-xl font-semibold mt-4 mb-2">My garage:</h2>
         <div className="flex gap-4 flex-wrap">
-          {userData.bikes.map((motorcycle: MotorcycleModel) => (
-            <MotorcycleCard
-              key={motorcycle._id as string}
-              text={motorcycle.motorcycleName}
-              id={motorcycle.id}
-            />
-          ))}
+          <Suspense fallback={<div>Loading user data...</div>}>
+            {userData.bikes.map((motorcycle: MotorcycleModel) => (
+              <MotorcycleCard
+                key={motorcycle._id as string}
+                text={motorcycle.motorcycleName}
+                id={motorcycle.id}
+                image={motorcycle.imageUrl}
+              />
+            ))}
+          </Suspense>
           <AddBikeCard />
         </div>
       </section>

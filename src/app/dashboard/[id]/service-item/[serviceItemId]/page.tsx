@@ -1,18 +1,17 @@
-import DeleteButton from "@/component/dashboard/serviceItemAnalitycs/DeleteButton";
+import { updateServiceRecord } from "@/app/Actions";
+import ServiceItemRowItem from "@/component/dashboard/ServiceItemRowItem";
 import dbConnect from "@/lib/dbConnect";
 import TrackedServicesModel, {
   ServiceItem,
-  ServiceTime,
 } from "@/model/TrackedServicesModel";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export default async function DataPage({
   params,
 }: {
-  params: { id: string; serviceItemId: string };
+  params: Promise<{ id: string; serviceItemId: string }>;
 }) {
-  const id = params.id;
-  const serviceItemId = params.serviceItemId;
+  const { id, serviceItemId } = await params;
 
   if (serviceItemId) {
     const data: ServiceItem = await getData(id, serviceItemId);
@@ -34,42 +33,64 @@ export default async function DataPage({
             </p>
           </div>
 
-          <table className="min-w-full bg-white border border-gray-300">
-            <thead>
-              <tr className="text-left">
-                <th className="py-2 px-4 border-b">Service Date</th>
-                <th className="py-2 px-4 border-b">Serviced At (km)</th>
-                <th className="py-2 px-4 border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.services.map((service) => (
+          <div className="min-w-full bg-white border border-gray-300">
+            <div className="w-full flex text-center font-bold">
+              <span className="py-2 w-1/3 px-4 border-b">Service Date</span>
+              <span className="py-2 w-1/3 px-4 border-b">Serviced At (km)</span>
+              <span className="py-2 w-1/3 px-4 border-b">Actions</span>
+            </div>
+            <div>
+              {data.services.reverse().map((service) => {
                 // @ts-ignore
-                <tr key={service._id}>
-                  <td className="py-2 px-4 border-b">
-                    {new Date(service.serviceDate).toLocaleDateString()}
-                  </td>
-                  <td className="py-2 px-4 border-b">
-                    {service.servicedAt} km
-                  </td>
-                  <td className="py-2 px-4 border-b flex space-x-2">
-                    <button
-                      disabled
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
-                    >
-                      Edit
-                    </button>
-                    <DeleteButton
-                      bikeId={id}
-                      trackedServiceItemId={serviceItemId}
-                      // @ts-ignore
-                      serviceRecordId={service._id.toString()}
+                const serviceId = service._id.toString();
+                return (
+                  <>
+                    <ServiceItemRowItem
+                      id={id}
+                      serviceItemId={serviceItemId}
+                      serviceDate={service.serviceDate}
+                      servicedAt={service.servicedAt}
+                      serviceId={serviceId}
+                      key={serviceId}
                     />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </>
+                );
+              })}
+            </div>
+          </div>
+          <form
+            action={updateServiceRecord}
+            className="flex w-full bg-gray-200"
+          >
+            <input type="hidden" name="bikeId" value={id} />
+            <input
+              type="hidden"
+              name="trackedServiceItemId"
+              value={serviceItemId}
+            />
+            <div className="p-2 border-b flex-1">
+              <input
+                required
+                type="date"
+                name="serviceDate"
+                className="border-gray-400 shadow-sm border-1 rounded py-2 px-4"
+              />
+            </div>
+            <div className="p-2 border-b flex-1">
+              <input
+                required
+                type="number"
+                name="servicedAt"
+                placeholder="Serviced At (km)"
+                className="border-gray-400 shadow-sm border-1 rounded py-2 px-4"
+              />
+            </div>
+            <div className="py-2 px-4 border-b flex space-x-2">
+              <button className="bg-green-500 w-full hover:bg-green-600 text-white font-bold py-1 px-2 rounded">
+                Add new
+              </button>
+            </div>
+          </form>
         </div>
       </section>
     );

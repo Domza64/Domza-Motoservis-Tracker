@@ -9,11 +9,11 @@ export default async function AddServiceItemPage({
   params,
   searchParams,
 }: {
-  params: { id: string; serviceItemId: string };
-  searchParams: { id?: string };
+  params: Promise<{ id: string; ServiceItemId: string }>;
+  searchParams: Promise<{ id?: string }>;
 }) {
-  const id = params.id;
-  const serviceItemId = searchParams.id;
+  const id = (await params).id;
+  const serviceItemId = (await searchParams).id;
 
   // Get today's date in the format YYYY-MM-DD
   const today = new Date().toISOString().split("T")[0];

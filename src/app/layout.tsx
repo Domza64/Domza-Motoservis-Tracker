@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { NextUIProvider } from "@nextui-org/react";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import "./globals.css";
 import Header from "@/component/header/Header";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,16 +15,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isAuthenticated } = getKindeServerSession();
-  const isUserAuthenticated = await isAuthenticated();
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NextUIProvider className="min-h-screen flex flex-col justify-between">
-          <Header />
-          {children}
-          {/*<Footer /> - No need for footer currently, might be added later */}
-        </NextUIProvider>
+        <Header />
+        {children}
+        {/*<Footer /> - No need for footer currently, might be added later */}
       </body>
     </html>
   );
