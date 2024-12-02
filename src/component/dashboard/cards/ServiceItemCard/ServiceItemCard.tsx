@@ -198,5 +198,9 @@ function formatDate(date: Date): string {
     month: "short",
     year: "numeric",
   };
-  return date.toLocaleDateString("en-GB", options).replace(/,/g, "");
+  try {
+    return date.toLocaleDateString("en-GB", options).replace(/,/g, "");
+  } catch {
+    return "error";
+  }
 }
